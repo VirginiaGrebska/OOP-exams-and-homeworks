@@ -1,0 +1,336 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+// Shape.h -------------------------------------------------------------
+// Счетох, че не си заслужава да се ползват указатели при обект само с 2 double стойности
+struct Point {
+    double x;
+    double y;
+
+    Point() {
+        x = 0;
+        y = 0;
+    }
+
+    Point(double arg_x, double arg_y) {
+        x = arg_x;
+        y = arg_y;
+    }
+};
+
+class Shape {
+    public:
+        virtual double getArea() = 0;
+        virtual double getCircumference() = 0;
+        virtual Point getCenter() const = 0;
+        virtual int getType() = 0;
+};
+
+// Circle.h -------------------------------------------------------
+class Circle: public Shape {
+    private:
+        Point center;
+        double radius;
+    public:
+        Circle(Point center, double radius);
+        Circle(double centerX, double centerY, double radius);
+        Circle(const Circle& otherCircle);
+        ~Circle();
+        Circle& operator=(const Circle& otherCircle);
+        bool operator==(const Circle& otherCircle);
+
+        double getArea();
+        double getCircumference();
+        Point getCenter() const;
+
+        double getRadius() const;
+        int getType();
+};
+
+// Circle.cpp ------------------------------------------------------------
+Circle::Circle(Point arg_center, double arg_radius) {
+    center.x = arg_center.x;
+    center.y = arg_center.y;
+    radius = arg_radius;
+}
+
+Circle::Circle(double arg_centerX, double arg_centerY, double arg_radius) {
+    center.x = arg_centerX;
+    center.y = arg_centerY;
+    radius = arg_radius;
+}
+
+Circle::Circle(const Circle& otherCircle) {
+    if(this != &otherCircle) {
+        radius = otherCircle.getRadius();
+        center = otherCircle.getCenter();
+    }
+}
+
+Circle::~Circle() { }
+
+Circle& Circle::operator=(const Circle& otherCircle) {
+    if(this != &otherCircle) {
+        radius = otherCircle.getRadius();
+        center = otherCircle.getCenter();
+    }
+    return *this;
+}
+
+bool Circle::operator==(const Circle& otherCircle) {
+    if(center.x == otherCircle.getCenter().x &&
+        center.y == otherCircle.getCenter().y &&
+        radius == otherCircle.getRadius()) {
+            return true;
+        }
+    return false;
+}
+
+double Circle::getArea() {
+    return M_PI * radius * radius;
+}
+
+double Circle::getCircumference() {
+    return 2 * M_PI * radius;
+}
+
+Point Circle::getCenter() const {
+    return center;
+}
+
+double Circle::getRadius() const {
+    return radius;
+}
+
+int Circle::getType() {
+    return 1;
+}
+
+// Rect.h ------------------------------------------------
+class Rect: public Shape {
+    private:
+        Point center;
+        Point size;
+    public:
+        Rect(Point center, Point size);
+        Rect(Rect& otherRect);
+        ~Rect();
+        Rect& operator=(const Rect& otherRect);
+        bool operator==(const Rect& otherRect);
+
+        double getArea();
+        double getCircumference();
+        Point getCenter() const;
+
+        Point getSize() const;
+        int getType();
+};
+
+// Rect.cpp -------------------------------------------------
+
+Rect::Rect(Point arg_center, Point arg_size) {
+    center = arg_center;
+    size = arg_size;
+}
+
+Rect::Rect(Rect& otherRect) {
+    if(this != &otherRect) {
+        size = otherRect.getSize();
+        center = otherRect.getCenter();
+    }
+}
+
+Rect::~Rect() { }
+
+Rect& Rect::operator=(const Rect& otherRect) {
+    if(this != &otherRect) {
+        size = otherRect.getSize();
+        center = otherRect.getCenter();
+    }
+    return *this;
+}
+
+bool Rect::operator==(const Rect& otherRect) {
+    if(center.x == otherRect.getCenter().x &&
+        center.y == otherRect.getCenter().y &&
+        size.x == otherRect.getSize().x &&
+        size.y == otherRect.getSize().y)
+        return true;
+    return false;
+}
+
+double Rect::getArea() {
+    return size.x * size.y;
+}
+
+double Rect::getCircumference() {
+    return size.x*2 + size.y*2;
+}
+
+Point Rect::getCenter() const {
+    return center;
+}
+
+Point Rect::getSize() const {
+    return size;
+}
+
+int Rect::getType() {
+    return 2;
+}
+
+// Triangle.h
+class Triangle: public Shape {
+private:
+        Point center;
+        Point a, b, c;
+        double lA, lB, lC; //length
+    public:
+        Triangle(Point center, Point a, Point b, Point c);
+        Triangle(Triangle& otherTriangle);
+        ~Triangle();
+        Triangle& operator=(const Triangle& otherTriangle);
+        bool operator==(const Triangle& otherTriangle);
+
+        double getArea();
+        double getCircumference();
+        Point getCenter() const;
+
+        Point getPointA() const;
+        Point getPointB() const;
+        Point getPointC() const;
+        int getType();
+};
+
+// Triangle.cpp
+Triangle::Triangle(Point arg_center, Point arg_a, Point arg_b, Point arg_c) {
+    center.x = arg_center.x;
+    center.y = arg_center.y;
+    a.x = arg_a.x;
+    a.y = arg_a.y;
+    b.x = arg_b.x;
+    b.y = arg_b.y;
+    c.x = arg_c.x;
+    c.y = arg_c.y;
+
+    lA = sqrt(pow((b.x - c.x),2) + pow((b.y - c.y),2));
+    lB = sqrt(pow((a.x - c.x),2) + pow((a.y - c.y),2));
+    lC = sqrt(pow((b.x - a.x),2) + pow((b.y - a.y),2));
+}
+
+Triangle::Triangle(Triangle& otherTriangle) {
+    if(this != &otherTriangle) {
+            center.x = otherTriangle.getCenter().x;
+            center.y = otherTriangle.getCenter().y;
+            a.x = otherTriangle.getPointA().x;
+            a.y = otherTriangle.getPointA().y;
+            b.x = otherTriangle.getPointB().x;
+            b.y = otherTriangle.getPointB().y;
+            c.x = otherTriangle.getPointC().x;
+            c.y = otherTriangle.getPointC().y;
+
+            lA = sqrt(pow((b.x - c.x),2) + pow((b.y - c.y),2));
+            lB = sqrt(pow((a.x - c.x),2) + pow((a.y - c.y),2));
+            lC = sqrt(pow((b.x - a.x),2) + pow((b.y - a.y),2));
+    }
+}
+
+Triangle::~Triangle() { }
+
+Triangle& Triangle::operator=(const Triangle& otherTriangle) {
+    if(this != &otherTriangle) {
+            center.x = otherTriangle.getCenter().x;
+            center.y = otherTriangle.getCenter().y;
+            a.x = otherTriangle.getPointA().x;
+            a.y = otherTriangle.getPointA().y;
+            b.x = otherTriangle.getPointB().x;
+            b.y = otherTriangle.getPointB().y;
+            c.x = otherTriangle.getPointC().x;
+            c.y = otherTriangle.getPointC().y;
+
+            lA = sqrt(pow((b.x - c.x),2) + pow((b.y - c.y),2));
+            lB = sqrt(pow((a.x - c.x),2) + pow((a.y - c.y),2));
+            lC = sqrt(pow((b.x - a.x),2) + pow((b.y - a.y),2));
+    }
+    return *this;
+}
+
+bool Triangle::operator==(const Triangle& otherTriangle) {
+    if(center.x == otherTriangle.getCenter().x &&
+        center.y == otherTriangle.getCenter().y &&
+        a.x == otherTriangle.getPointA().x &&
+        a.y == otherTriangle.getPointA().y &&
+        b.x == otherTriangle.getPointB().x &&
+        b.y == otherTriangle.getPointB().y &&
+        c.x == otherTriangle.getPointC().x &&
+        c.y == otherTriangle.getPointC().y)
+        return true;
+    return false;
+}
+
+double Triangle::getArea() {
+    double p = getCircumference() / 2;
+    return sqrt(p*(p-lA)*(p-lB)*(p-lC));
+}
+
+double Triangle::getCircumference() {
+    return lA + lB + lC;
+}
+
+Point Triangle::getCenter() const {
+    return center;
+}
+
+Point Triangle::getPointA() const {
+    return a;
+}
+
+Point Triangle::getPointB() const {
+    return b;
+}
+
+Point Triangle::getPointC() const {
+    return c;
+}
+
+int Triangle::getType() {
+    return 3;
+}
+
+// main.cpp ---------------------------------
+double getDistance(Point a, Point b) {
+    return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+}
+
+bool isShapeInside( Shape& shape1, Shape& shape2) {
+    // 1 - circle, 2 - rect, 3 - triangle, no time for enums :D
+    if(shape1.getType() == 1 && shape2.getType() == 1) {
+        Circle* sh1 = (Circle*) &shape1;
+        Circle* sh2 = (Circle*) &shape2;
+        double minRad = sh1->getRadius(), maxRad = sh2->getRadius();
+        if(minRad > maxRad)
+            swap(minRad, maxRad);
+        delete sh1;
+        delete sh2;
+        return (maxRad > minRad + getDistance(sh1->getCenter(), sh2->getCenter()));
+    }
+    else if(shape1.getType() == 2 && shape2.getType() == 2) {
+        Rect* sh1 = (Rect*) &shape1;
+        Rect* sh2 = (Rect*) &shape2;
+
+    }
+    return false;
+}
+
+int main() {
+    Circle a(6, 6, 5);
+    Circle b(8, 8, 2);
+    cout << isShapeInside(a, b) << endl;
+
+    cin.sync();
+    cin.get();
+    return 0;
+}
+
