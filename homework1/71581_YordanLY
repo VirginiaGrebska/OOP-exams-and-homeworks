@@ -1,0 +1,220 @@
+#include <string>
+#include <iostream>
+using namespace std;
+
+struct Date {
+    int year;
+    int month;
+    int day;
+
+    Date() {}
+
+    Date(int d, int m, int y) {
+        year = y;
+        month = m;
+        day = d;
+    }
+};
+
+struct Zodiac {
+    string nam;
+    Date* beginning; // year doesn't matter
+    Date* ending;
+};
+
+struct Person {
+    string familyName;
+    Date* birthDate;
+};
+
+class ListPerson {
+    private:
+        Person** people;
+        int peopleCount;
+        int maxCount;
+
+    public:
+        static Zodiac zodiac[12];
+
+        ListPerson(int maxCount);
+        ~ListPerson();
+
+        void addPerson(Person* person);
+        void removePerson(string name);
+        Person* getPerson(string name);
+
+        int getMaxCount() const;
+        int getCount();
+        Person** getPeopleList() const;
+        bool hasName(string name) const;
+
+        ListPerson join(const ListPerson& otherList);
+        ListPerson cross(const ListPerson& otherList);
+        ListPerson substract(const ListPerson& otherList);
+
+        string getSign(string personName);
+
+};
+// ----------------------------------------------------------------------------------
+
+Zodiac ListPerson::zodiac[12];
+
+ListPerson::ListPerson(int arg_maxCount) {
+    maxCount = arg_maxCount;
+    people = new Person*[maxCount];
+    peopleCount = 0;
+    for(int i = 0; i < maxCount; i++) {
+        people[i] = NULL;
+    }
+
+    // Init zodiac here
+    // Init in chronological order for easier searching
+    // ......
+}
+
+ListPerson::~ListPerson() {
+    delete[] people;
+}
+
+void ListPerson::addPerson(Person* person) {
+    for(int i = 0; i < maxCount; i++) {
+        if(people[i] == NULL){
+            people[i] = person;
+            peopleCount++;
+            break;
+        }
+    }
+}
+
+void ListPerson::removePerson(string name) {
+    for(int i = 0; i < maxCount; i++) {
+        if(people[i]->familyName == name){
+            people[i] = NULL;
+            peopleCount--;
+
+            break;
+        }
+    }
+}
+
+Person* ListPerson::getPerson(string name) {
+    for(int i = 0; i < maxCount; i++) {
+        if(people[i]->familyName == name){
+            return people[i];
+        }
+    }
+    return NULL;
+}
+
+int ListPerson::getMaxCount() const {
+    return maxCount;
+}
+
+int ListPerson::getCount() {
+    return peopleCount;
+}
+
+Person** ListPerson::getPeopleList() const {
+    return people;
+}
+
+bool ListPerson::hasName(string name) const {
+    for(int i = 0; i < maxCount; i++) {
+        if(people[i] != NULL) {
+            if(people[i]->familyName == name)
+                return true;
+        }
+    }
+
+    return false;
+}
+
+ListPerson ListPerson::join(const ListPerson& otherList) {
+    ListPerson res(getMaxCount() + otherList.getMaxCount());
+    for(int i = 0; i < maxCount; i++) {
+        if(people[i] != NULL) {
+            res.addPerson(people[i]);
+        }
+    }
+    Person** lst = otherList.getPeopleList();
+    for(int i = 0; i < otherList.getMaxCount(); i++) {
+        if(lst[i] != NULL) {
+            if(!hasName(lst[i]->familyName)) {
+                res.addPerson(lst[i]);
+            }
+        }
+    }
+    delete[] lst;
+    return res;
+}
+
+ListPerson ListPerson::cross(const ListPerson& otherList) {
+    ListPerson res(getMaxCount() + otherList.getMaxCount());
+    for(int i = 0; i < maxCount; i++) {
+        if(people[i] != NULL && otherList.hasName(people[i]->familyName)) {
+            res.addPerson(people[i]);
+        }
+    }
+    return res;
+}
+
+ListPerson ListPerson::substract(const ListPerson& otherList) {
+    ListPerson res(getMaxCount() + otherList.getMaxCount());
+    for(int i = 0; i < maxCount; i++) {
+        if(people[i] != NULL && !otherList.hasName(people[i]->familyName)) {
+            res.addPerson(people[i]);
+        }
+    }
+    return res;
+}
+
+string ListPerson::getSign(string personName) {
+    Person* person = getPerson(personName);
+    if(person!=NULL) {
+        for(int i = 0; i < 12; i++) {
+            if(person->birthDate->month >= zodiac[i].beginning->month &&
+               person->birthDate->month <= zodiac[i].ending->month &&
+               person->birthDate->day >= zodiac[i].beginning->day &&
+               person->birthDate->day <= zodiac[i].ending->day)
+                return zodiac[i].name;
+        }
+    }
+}
+
+// ----------------------------------------------------------------------------------
+int main() {
+    ListPerson lst1(10);
+
+    Person* pesho = new Person();
+    pesho->familyName = "Peshov";
+    pesho->birthDate = new Date(12, 3, 1994);
+    lst1.addPerson(pesho);
+
+    Person* petko = new Person();
+    petko->familyName = "petko";
+    petko->birthDate = new Date(12, 3, 1994);
+    lst1.addPerson(petko);
+
+
+    ListPerson lst2(10);
+
+    Person* asd = new Person();
+    asd->familyName = "asd";
+    asd->birthDate = new Date(12, 3, 1994);
+    lst2.addPerson(asd);
+
+    Person* qwe = new Person();
+    qwe->familyName = "petko";
+    qwe->birthDate = new Date(12, 3, 1994);
+    lst2.addPerson(qwe);
+
+    cout << lst1.getCount() << endl;
+    cout << lst2.getCount() << endl;
+
+    ListPerson lst3 = lst1.cross(lst2);
+    cout << lst3.getCount() << endl;
+
+    cin.sync();
+    cin.get();
+    return 0;
+}
