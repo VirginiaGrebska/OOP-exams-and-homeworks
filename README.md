@@ -3,7 +3,7 @@ Results from homeworks and exams
 :)</br>
 
 K1 - Group 1: </br>
-71594 K1 5.00 D1 5.00 K2 4.00 D2 2.00 <strong> Final: 4.00 </strong> </br>
+71594 K1 5.00 D1 5.00 K2 4.00 D2 4.50 <strong> Final: 5.00 </strong> </br>
 71530 K1 6.00 D1 5.50 K2 5.00 D2 5.50 <strong> Final: 6.00 </strong> </br>
 71565 K1 5.20 D1 2.00 K2 3.30 D2 2.00 <strong> Final: 4.00 </strong> </br>
 71568 K1 3.40 D1 4.00 K2 3.40 D2 2.00 <strong> Final: 3.00 </strong> </br>
