@@ -1,0 +1,228 @@
+#include<iostream>
+
+using namespace std;
+
+class Figure {
+public:
+	virtual double area(){
+		return 0;
+	}
+	virtual double perimeter(){
+		return 0;
+	}
+	virtual double center(){
+		return 0;
+	}
+};
+class Triangle : public Figure
+{
+public:
+	Triangle();
+	Triangle(double a, double b, double c, double h);
+	~Triangle();
+	virtual double area(){
+		return this->S(a, h);
+	}
+	virtual double perimeter(){
+		return this->P(a,b,c);
+	}
+	virtual double center(){
+		return this->R(a,b,c);
+	}
+	void set_a(double a){
+		this->a = a;
+	}
+	void set_b(double b){
+		this->b = b;
+	}
+	void set_c(double c){
+		this->c = c;
+	}
+	void set_h(double h){
+		this->h = h;
+	}
+	double get_a(){
+		return a;
+	}
+	double get_b(){
+		return b;
+	}
+	double get_c(){
+		return c;
+	}
+	double get_h(){
+		return h;
+	}
+	double S(double a, double h){
+		return (a*h) / 2;
+	}
+	double P(double a, double b, double c){
+		return (a + b + c);
+	}
+	double R(double a, double b, double c){
+		return (a + b - c) / 2;
+	}
+	bool operator==(Triangle t){
+		if (this->a == a && this->b == b && this->c == c && this->h == h){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+private:
+	double a;
+	double b;
+	double c;
+	double h;
+};
+class Circle : public Figure
+{
+public:
+	Circle();
+	Circle(double r, double pi);
+	~Circle();
+	virtual double area(){
+		return this->S1(r, pi);
+	}
+	virtual double perimeter(){
+		return this->P1(r,pi);
+	}
+
+	void set_r(double r){
+		this->r = r;
+	}
+	double get_r(){
+		return r;
+	}
+	double S1(double r, double pi){
+		return (pi*r*r);
+	}
+	double P1(double r, double pi){
+		return (2 * pi*r);
+	}
+	bool operator==(Circle c){
+		if (this->r == r){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+private:
+	double r;
+	const double pi = 3.14;
+};
+class Square : public Figure{
+public:
+	Square();
+	Square(double a, double b);
+	~Square();
+	virtual double area(){
+		return this->S2(a,b);
+	}
+	virtual double perimeter(){
+		return this->P2(a,b);
+	}
+	virtual double center(){
+		return this->R2(a,b);
+	}
+	void set_a(double a){
+		this->a = a;
+	}
+	void set_b(double b){
+		this->b = b;
+	}
+	double get_a(){
+		return a;
+	}
+	double get_b(){
+		return b;
+	}
+	double S2(double a, double b){
+		return (a*b);
+	}
+	double P2(double a, double b){
+		return (2 * a + 2 * b);
+	}
+	double R2(double a, double b){
+		if (a > b){
+			return b / 2;
+		}
+		else{
+			return a / 2;
+		}
+	}
+	bool operator==(Square s){
+		if (this->a == a && this->b == b){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+private:
+	double a;
+	double b;
+};
+Triangle::Triangle(double a, double b, double c, double h){
+	this->a = a;
+	this->b = b;
+	this->c = c;
+	this->h = h;
+}
+Circle::Circle(double r, double pi){
+	this->r = r;
+}
+Square::Square(double a, double b){
+	this->a = a;
+	this->b = b;
+}
+
+int main(){
+	int x;
+	int y;
+	Figure* a[3];
+	Triangle one;
+	Circle two;
+	Square three;
+
+	a[0] = &one;
+	a[1] = &two;
+	a[2] = &three;
+	
+	a[0]->area();
+	a[0]->perimeter();
+	a[0]->center();
+
+	a[1]->area();
+	a[1]->perimeter();
+
+	a[2]->area();
+	a[2]->perimeter();
+	a[2]->center();
+
+	if (x == 0)
+	{
+		double a1,b1,c1, h1;
+		cin >> a1 >> b1 >> c1 >> h1;
+		a[0] = new Triangle(a1, b1, c1, h1);
+
+	}
+	else if (x == 1){
+		double r1;
+		const double pi1 = 3.14;
+		cin >> r1;
+		a[1] = new Circle(r1,pi1);
+	}
+	else if (x == 2){
+		double a2, b2;
+		cin >> a2 >> b2;
+		a[2] = new Square(a2, b2);
+	}
+
+
+	system("pause");
+	return 0;
+
+}
